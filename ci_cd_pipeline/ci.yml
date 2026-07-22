@@ -1,0 +1,52 @@
+name: TaskManager CI Pipeline
+
+on:
+  push:
+    branches:
+      [main]
+  pull_request:
+    branches:
+      [main]
+
+# This job is commented out to demonstrate how to use a matrix strategy for running the build on multiple operating systems. 
+# Uncomment and modify as needed.
+
+# jobs:
+#   build:
+#     runs-on: {{matrix.os}}
+#     matrix:
+#       os: [ubuntu-latest, windows-latest, macos-latest]
+
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+      
+#       - name: Setup .NET
+#         uses: actions/
+      
+#       - name: Install dependencies
+#         run: dotnet restore
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal

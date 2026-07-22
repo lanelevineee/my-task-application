@@ -1,0 +1,116 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstats
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+
+## Publish output
+publish/
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## macOS
+.DS_Store
+
+## Logs
+logs/
+*.log
+
+## Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResult.xml
+coverage*/
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+
+## ============================================
+## SENSITIVE DATA - DO NOT COMMIT
+## ============================================
+
+## Environment variables
+.env
+.env.*
+!.env.example
+
+## Secrets and certificates
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.cert
+*.crt
+
+## User secrets
+secrets.json
+**/Properties/serviceDependencies.json
+
+## App settings with secrets (uncomment if needed)
+# appsettings.Development.json
+# appsettings.*.local.json
+
+## Docker override (may contain secrets)
+docker-compose.override.yml
+docker-compose.*.yml
+
+## Logs that may contain sensitive info
+logs/
+*.log
+logs/**/*
+
+## Azure / Cloud
+*.azureauth
+azure-pipelines.yml
+
+## AWS
+*.pem
+aws-credentials.json
+
+## Database files (local dev)
+*.db
+*.sqlite
+*.sqlite3
+
+## Temp files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
