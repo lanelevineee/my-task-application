@@ -41,11 +41,7 @@ jobs:
           **/obj/Release/
 
   docker-build:
-    runs-on: {{matrix.os}}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        
+    runs-on: ubuntu-latest
     needs: build
 
     steps:
