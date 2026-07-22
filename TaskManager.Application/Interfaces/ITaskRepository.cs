@@ -8,8 +8,8 @@ public interface ITaskRepository
     Task<TaskEntity> CreateAsync(TaskEntity task, CancellationToken cancellationToken = default);
     Task<TaskEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<(IEnumerable<TaskEntity> Tasks, int TotalCount)> GetAllAsync(
-        string? status,
-        string? priority,
+        Domain.Enums.TaskStatus? status,
+        Domain.Enums.TaskPriority? priority,
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);

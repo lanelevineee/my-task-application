@@ -1,4 +1,5 @@
 using Serilog;
+using TaskManager.Api.Middleware;
 using TaskManager.Application;
 using TaskManager.Infrastructure;
 
@@ -42,6 +43,8 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseSerilogRequestLogging();
 

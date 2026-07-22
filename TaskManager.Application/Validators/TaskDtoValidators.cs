@@ -15,22 +15,10 @@ public class CreateTaskDtoValidator : AbstractValidator<CreateTaskDto>
             .MaximumLength(2000).WithMessage("Description must not exceed 2000 characters");
 
         RuleFor(x => x.Status)
-            .Must(BeValidStatus).WithMessage("Invalid status. Valid values: Pending, InProgress, Completed, Cancelled");
+            .IsInEnum().WithMessage("Invalid status. Valid values: Pending, InProgress, Completed, Cancelled");
 
         RuleFor(x => x.Priority)
-            .Must(BeValidPriority).WithMessage("Invalid priority. Valid values: Low, Medium, High, Critical");
-    }
-
-    private static bool BeValidStatus(string status)
-    {
-        var validStatuses = new[] { "Pending", "InProgress", "Completed", "Cancelled" };
-        return validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static bool BeValidPriority(string priority)
-    {
-        var validPriorities = new[] { "Low", "Medium", "High", "Critical" };
-        return validPriorities.Contains(priority, StringComparer.OrdinalIgnoreCase);
+            .IsInEnum().WithMessage("Invalid priority. Valid values: Low, Medium, High, Critical");
     }
 }
 
@@ -46,23 +34,11 @@ public class UpdateTaskDtoValidator : AbstractValidator<UpdateTaskDto>
             .MaximumLength(2000).WithMessage("Description must not exceed 2000 characters");
 
         RuleFor(x => x.Status)
-            .Must(BeValidStatus).When(x => !string.IsNullOrEmpty(x.Status))
+            .IsInEnum().When(x => x.Status.HasValue)
             .WithMessage("Invalid status. Valid values: Pending, InProgress, Completed, Cancelled");
 
         RuleFor(x => x.Priority)
-            .Must(BeValidPriority).When(x => !string.IsNullOrEmpty(x.Priority))
+            .IsInEnum().When(x => x.Priority.HasValue)
             .WithMessage("Invalid priority. Valid values: Low, Medium, High, Critical");
-    }
-
-    private static bool BeValidStatus(string status)
-    {
-        var validStatuses = new[] { "Pending", "InProgress", "Completed", "Cancelled" };
-        return validStatuses.Contains(status, StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static bool BeValidPriority(string priority)
-    {
-        var validPriorities = new[] { "Low", "Medium", "High", "Critical" };
-        return validPriorities.Contains(priority, StringComparer.OrdinalIgnoreCase);
     }
 }

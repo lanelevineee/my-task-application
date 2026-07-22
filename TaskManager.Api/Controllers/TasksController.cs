@@ -19,8 +19,8 @@ public class TasksController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<PagedResult<TaskDto>>> GetAll(
-        [FromQuery] string? status = null,
-        [FromQuery] string? priority = null,
+        [FromQuery] Domain.Enums.TaskStatus? status = null,
+        [FromQuery] Domain.Enums.TaskPriority? priority = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -35,10 +35,10 @@ public class TasksController : ControllerBase
     {
         var query = new GetTaskByIdQuery(id);
         var task = await _mediator.Send(query, cancellationToken);
-        
+
         if (task is null)
             return NotFound($"Task with ID {id} not found");
-        
+
         return Ok(task);
     }
 
@@ -63,10 +63,10 @@ public class TasksController : ControllerBase
     {
         var command = new DeleteTaskCommand(id);
         var deleted = await _mediator.Send(command, cancellationToken);
-        
+
         if (!deleted)
             return NotFound($"Task with ID {id} not found");
-        
+
         return NoContent();
     }
 }

@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using TaskManager.Application.Interfaces;
+using TaskManager.Domain.Enums;
 using TaskEntity = TaskManager.Domain.Entities.Task;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ public class TaskRepository : ITaskRepository
 
     public TaskRepository(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection") 
+        _connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
     }
 
@@ -29,7 +30,21 @@ public class TaskRepository : ITaskRepository
             VALUES (@Id, @Title, @Description, @Status, @Priority, @DueDate, @CreatedAt, @UpdatedAt)
             RETURNING id, title, description, status, priority, due_date, created_at, updated_at";
 
-        var created = await connection.QuerySingleAsync<TaskEntity>(sql, task);
+        var parameters = new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            Status = task.Status.ToString(),
+            Priority = task.Priority.ToString(),
+            task.DueDate,
+            task.CreatedAt,
+            task.UpdatedAt
+        };
+
+        var created = await connection.QuerySingleAsync<TaskEntity>(sql, parameters);
+        created.Status = Enum.Parse<Domain.Enums.TaskStatus>(created.Status.ToString());
+        created.Priority = Enum.Parse<Domain.Enums.TaskPriority>(created.Priority.ToString());
         return created;
     }
 
@@ -39,12 +54,20 @@ public class TaskRepository : ITaskRepository
         await connection.OpenAsync(cancellationToken);
 
         const string sql = "SELECT id, title, description, status, priority, due_date, created_at, updated_at FROM tasks WHERE id = @Id";
-        return await connection.QueryFirstOrDefaultAsync<TaskEntity>(sql, new { Id = id });
+        var task = await connection.QueryFirstOrDefaultAsync<TaskEntity>(sql, new { Id = id });
+
+        if (task != null)
+        {
+            task.Status = Enum.Parse<Domain.Enums.TaskStatus>(task.Status.ToString());
+            task.Priority = Enum.Parse<Domain.Enums.TaskPriority>(task.Priority.ToString());
+        }
+
+        return task;
     }
 
     public async Task<(IEnumerable<TaskEntity> Tasks, int TotalCount)> GetAllAsync(
-        string? status,
-        string? priority,
+        Domain.Enums.TaskStatus? status,
+        Domain.Enums.TaskPriority? priority,
         int page,
         int pageSize,
         CancellationToken cancellationToken = default)
@@ -55,20 +78,20 @@ public class TaskRepository : ITaskRepository
         var whereClauses = new List<string>();
         var parameters = new DynamicParameters();
 
-        if (!string.IsNullOrEmpty(status))
+        if (status.HasValue)
         {
             whereClauses.Add("status = @Status");
-            parameters.Add("Status", status);
+            parameters.Add("Status", status.Value.ToString());
         }
 
-        if (!string.IsNullOrEmpty(priority))
+        if (priority.HasValue)
         {
             whereClauses.Add("priority = @Priority");
-            parameters.Add("Priority", priority);
+            parameters.Add("Priority", priority.Value.ToString());
         }
 
         var whereClause = whereClauses.Count > 0 ? "WHERE " + string.Join(" AND ", whereClauses) : "";
-        
+
         var countSql = $"SELECT COUNT(*) FROM tasks {whereClause}";
         var totalCount = await connection.ExecuteScalarAsync<int>(countSql, parameters);
 
@@ -84,7 +107,13 @@ public class TaskRepository : ITaskRepository
         parameters.Add("Offset", offset);
 
         var tasks = await connection.QueryAsync<TaskEntity>(selectSql, parameters);
-        
+
+        foreach (var task in tasks)
+        {
+            task.Status = Enum.Parse<Domain.Enums.TaskStatus>(task.Status.ToString());
+            task.Priority = Enum.Parse<Domain.Enums.TaskPriority>(task.Priority.ToString());
+        }
+
         return (tasks, totalCount);
     }
 
@@ -105,7 +134,20 @@ public class TaskRepository : ITaskRepository
             RETURNING id, title, description, status, priority, due_date, created_at, updated_at";
 
         task.UpdatedAt = DateTime.UtcNow;
-        var updated = await connection.QuerySingleAsync<TaskEntity>(sql, task);
+        var parameters = new
+        {
+            task.Id,
+            task.Title,
+            task.Description,
+            Status = task.Status.ToString(),
+            Priority = task.Priority.ToString(),
+            task.DueDate,
+            task.UpdatedAt
+        };
+
+        var updated = await connection.QuerySingleAsync<TaskEntity>(sql, parameters);
+        updated.Status = Enum.Parse<Domain.Enums.TaskStatus>(updated.Status.ToString());
+        updated.Priority = Enum.Parse<Domain.Enums.TaskPriority>(updated.Priority.ToString());
         return updated;
     }
 

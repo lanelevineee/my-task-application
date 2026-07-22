@@ -83,8 +83,8 @@ secrets.json
 **/Properties/serviceDependencies.json
 
 ## App settings with secrets (uncomment if needed)
-# appsettings.Development.json
-# appsettings.*.local.json
+appsettings.Development.json
+appsettings.*.local.json
 
 ## Docker override (may contain secrets)
 docker-compose.override.yml

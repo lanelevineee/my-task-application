@@ -5,16 +5,16 @@ namespace TaskManager.Application.DTOs;
 public record CreateTaskDto(
     [Required][MaxLength(200)] string Title,
     string? Description,
-    string Status = "Pending",
-    string Priority = "Medium",
+    Domain.Enums.TaskStatus Status = Domain.Enums.TaskStatus.Pending,
+    Domain.Enums.TaskPriority Priority = Domain.Enums.TaskPriority.Medium,
     DateTime? DueDate = null
 );
 
 public record UpdateTaskDto(
     [Required][MaxLength(200)] string Title,
     string? Description,
-    string? Status,
-    string? Priority,
+    Domain.Enums.TaskStatus? Status,
+    Domain.Enums.TaskPriority? Priority,
     DateTime? DueDate
 );
 
@@ -22,8 +22,8 @@ public record TaskDto(
     Guid Id,
     string Title,
     string? Description,
-    string Status,
-    string Priority,
+    Domain.Enums.TaskStatus Status,
+    Domain.Enums.TaskPriority Priority,
     DateTime? DueDate,
     DateTime CreatedAt,
     DateTime UpdatedAt
